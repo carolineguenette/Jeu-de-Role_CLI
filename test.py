@@ -1,3 +1,4 @@
+#Just for testing some piece of code. Not part of the project
 from typing import Self
 
 class Character:

@@ -1,3 +1,4 @@
+"""A really simple way to give so AI to an ennemy"""
 from random import randint
 
 from character import Character

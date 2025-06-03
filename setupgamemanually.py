@@ -3,7 +3,7 @@
 - get is_valid to check if a valid RolePlayGame setup has been created correctly
 - get config to have a string representation of the actual setup
 """
-from utils import get_valid_user_input, get_nonempty_string_input, get_int_input
+from utils import get_valid_user_input, get_nonempty_string_input, get_valid_int_input
 from character import Character
 from potion import Potion
 import constants_color as c
@@ -215,10 +215,10 @@ class SetupGameManually():
             is_ennemy (bool): True if it's an ennemy, False if it's the player character
         """
         character.name = get_nonempty_string_input(f"Nom {"de l'ennemi" if is_ennemy else 'du personnage'}: ")
-        character.stats.max_life = get_int_input("Nombre de points de vie: ")[0]
+        character.stats.max_life = get_valid_int_input("Nombre de points de vie: ")[0]
         character.current_life = character.stats.max_life
 
-        attacks_nb = get_int_input("Attaque min et max (séparés par un espace): ", nb_of_int=2, valid_ascending_order=True)
+        attacks_nb = get_valid_int_input("Attaque min et max (séparés par un espace): ", nb_of_int=2, valid_ascending_order=True)
         character.stats.attack_min = attacks_nb[0]
         character.stats.attack_max = attacks_nb[1]
 
@@ -229,9 +229,9 @@ class SetupGameManually():
 
         if character.stats.can_drink_potion:
             character.inventory.clear() #We recreate the inventory
-            potions_nb = get_int_input("Nombre de potion(s) dans l'inventaire: ", valid_higher_than_0=False)    #Pourrait etre 0
+            potions_nb = get_valid_int_input("Nombre de potion(s) dans l'inventaire: ", valid_higher_than_0=False)    #Pourrait etre 0
             for i in range(potions_nb[0]):
-                potion_params = get_int_input(f"Paramètres de récupération de la potion {i+1} (min et max, séparés par un espace) ", nb_of_int=2, valid_ascending_order=True)
+                potion_params = get_valid_int_input(f"Paramètres de récupération de la potion {i+1} (min et max, séparés par un espace) ", nb_of_int=2, valid_ascending_order=True)
                 potion = Potion(potion_params[0], potion_params[1])
                 character.inventory.append(potion)
                 

@@ -128,8 +128,8 @@ if __name__ == "__main__":
     #Simulate a game end...
     if isinstance(setup.is_valid, RoleplayGame):
         game = setup.game
-        game.player.current_life = 0
-        game.player.inventory.clear()
+        game._player.current_life = 0
+        game._player.inventory.clear()
 
     print(f"Setup info after a simulate game (must be the same): \n{setup.info}")
   

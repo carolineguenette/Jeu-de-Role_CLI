@@ -22,22 +22,32 @@ DEFAULT_ATTACK_ENNEMY_MAX = 15
 class RoleplayGame:
 
     def __init__(self, player_character: Character, ennemy_characters: list[Character]):
-        self.player = player_character
-        self.ennemies = ennemy_characters
-        self.tour_nb = 0
+        """Initialize the RoleplayGame
+
+        Args:
+            player_character (Character): The player. Must be a valid Character
+            ennemy_characters (list[Character]): A list of ennemies. Must contains at least one ennemy
+        """
+        self._player = player_character
+        self._ennemies = ennemy_characters
+        self._tour_nb = 0
+        logging.debug("Creation of RoleplayGame with the followings parameters:")
+        logging.debug(self.settings_info)
 
 
     def play(self, print_settings = True):
         """Manage the game. Launch each tour until the game is over.
 
         Args:
-            print_settings (bool, optional): Indicated to print the settings at the beginning of the game. Defaults to True.
+            print_settings (bool, optional): If True, print the settings at the beginning of the game. Defaults to True.
 
         Raises:
             ValueError: player and ennnemies are not properly setup
         """
-        if self.player and len(self.ennemies) > 0:
+        #Valid if game setup is ok
+        if self._player and len(self._ennemies) > 0:
 
+            #Play!
             print("DÉBUT DE LA PARTIE")
             if print_settings:
                 print("Voici les participants:")
@@ -53,30 +63,21 @@ class RoleplayGame:
 
     @property
     def settings_info(self) -> str:
-        """Get the game settings
+        """Get the game settings. Read-Only property
 
         Returns:
             str: A multiple lines str that give all details about player and ennemy Characters and there inventory
         """
         str = "Joueur:\n"             
-        str += f"  {self.player}"         #spaces before: for indent infos. Do not remove...
-        str += ''.join([f"\n    {obj}" for obj in self.player.inventory])
+        str += f"  {self._player}"         #spaces before: for indent infos. Do not remove...
+        str += ''.join([f"\n    {obj}" for obj in self._player.inventory])
         
         str +=  "\nEnnemi(s):"
-        for ennemy in self.ennemies:
+        for ennemy in self._ennemies:
             str += f"\n  {ennemy}"
             str += ''.join([f"\n    {obj}" for obj in ennemy.inventory])
 
         return str
-
-
-    def _finalize_end(self):
-        print(f"{c.BLUE}{'-' * 20} 🏁 Fin de partie 🏁 {'-' * 50}{c.RESET}")
-        
-        if self.player.is_dead:
-            print("Vous avez PERDU 💀")
-        else:
-            print("Vous avez GAGNÉ 🏆!")
 
 
     def _tour(self):
@@ -86,19 +87,21 @@ class RoleplayGame:
 
         print(f"{c.BLUE}{'-' * 20} Tour {self.tour_nb} {'-' * 70}{c.RESET}")
 
+        #------------------------
         #Player play always first
         print("C'est votre tour!")
-        if not self.player.took_a_potion:
+        if not self._player.took_a_potion:
             self._tour_player()
 
         else:
             print(f"{c.MAGENTA}Vous{c.RESET} passez votre tour puisque vous avez fouillé votre sac pour une potion au tour précédent ⌛.")
-            self.player.reset_took_a_potion()
+            self._player.reset_took_a_potion()
             get_valid_user_input('Appuyer sur retour pour continuer...', ('',))
         
+        #------------------------
         #Ennemies play next
-        print(f"C'est au tour {"des ennemies" if len(self.ennemies) >1 else "de l'ennemi."} ")
-        for ennemy in self.ennemies:
+        print(f"C'est au tour {"des ennemies" if len(self._ennemies) >1 else "de l'ennemi."} ")
+        for ennemy in self._ennemies:
             if not ennemy.is_dead:
 
                 if not ennemy.took_a_potion:
@@ -109,41 +112,46 @@ class RoleplayGame:
             else:
                 print(f"{ennemy.name} est {c.RED}mort{c.RESET} 💀.")
 
+        #-----------------------------------------------
         #Tour end: display life points of each Character
         print("Récapitulatif du tour:")
-        print("\t"+ self.player.life_status)
-        for ennemy in self.ennemies:
-            print("\t"+ ennemy.life_status)
+        print("\t"+ self._player.life_status)
+        print(''.join(["\t"+ ennemy.life_status for ennemy in self._ennemies]))
 
 
     def _tour_player(self):
+        """Ask action to do to user (between Attack and Drink a potion) and manage it
+        """
 
         #Action choice
         #note: the ⚔️ seams to delete the next caracter: 2 spaces add in string
-        player_answer = get_valid_user_input(f"Souhaitez-vous attaquer ⚔️  ({Character.ACTION_ATTACK}) ou utliser une potion ✨ ({Character.ACTION_DRINKPOTION})? ", Character.ACTIONS)
+        player_answer = get_valid_user_input(f"Souhaitez-vous attaquer ⚔️  ({Character.ACTION_ATTACK}) ou boire une potion ✨ ({Character.ACTION_DRINKPOTION})? ", Character.ACTIONS)
         
         # Action management
+        #   Attack
         if player_answer == Character.ACTION_ATTACK:
-            if len(self.ennemies) > 1:
+            
+            #If there is more than 1 ennemy, need to ask the user which one he want to attack. Otherwise, there is only one annemy.
+            if len(self._ennemies) > 1:
                 self._display_ennemies()
-                valid_choice = tuple(str(x) for x in range(1, len(self.ennemies)+1))
-                valid_choice_display = tuple(x for x in range(1, len(self.ennemies)+1)) #To display a tuple without the '' around str value...
+                valid_choices = tuple(x for x in range(1, len(self._ennemies)+1)) 
+                attack_ennemy_index = int(get_valid_user_input(f"Quel ennemi attaquez-vous {valid_choices}? ", valid_choices)) - 1   # -1 because display list begin to 1 (not 0)
+            
+            else:   #Only one ennemy : attack this one
+                attack_ennemy_index = 0
 
-                attack_ennemy_index = int(get_valid_user_input(f"Quel ennemi attaquez-vous {valid_choice_display}? ", valid_choice)) - 1   # -1 because display list begin to 1 (not 0)
-            else:
-                attack_ennemy_index = 0 #Only one ennemy : attack this one
-
-            damage = self.player.attacks(self.ennemies[attack_ennemy_index])
-            print(f"{c.MAGENTA}Vous{c.RESET} attaquez {self.ennemies[attack_ennemy_index].name} et lui faites {c.RED}{damage}{c.RESET} point{'s' if damage > 1 else ''} de dommage. ⚔️")
+            damage = self._player.attacks(self._ennemies[attack_ennemy_index])
+            print(f"{c.MAGENTA}Vous{c.RESET} attaquez {self._ennemies[attack_ennemy_index].name} et lui faites {c.RED}{damage}{c.RESET} point{'s' if damage > 1 else ''} de dommage. ⚔️")
         
+        #   Drink a potion
         elif player_answer == Character.ACTION_DRINKPOTION:
-            life_pt_gain = self.player.drink_a_potion()
+            life_pt_gain = self._player.drink_a_potion()
 
             if  life_pt_gain == Character.POTION_NOT_FOUND:
                 #Comment: Changement dans règle -> si pas de potion alors pas de recup et perte du tour...
-                print(f"{c.MAGENTA}Vous{c.RESET} avez fouillé votre sac mais il n'y a plus de potion. Vie: {self.player.life_status}.")
+                print(f"{c.MAGENTA}Vous{c.RESET} avez fouillé votre sac mais il n'y a plus de potion. Vie: {self._player.life_status}.")
             else:
-                print(f"{c.MAGENTA}Vous{c.RESET} buvez une potion et récupérez {c.GREEN}{life_pt_gain}{c.RESET} point{'s' if life_pt_gain > 1 else ''} de vie ❤️. Vie: {self.player.life_status}.")
+                print(f"{c.MAGENTA}Vous{c.RESET} buvez une potion et récupérez {c.GREEN}{life_pt_gain}{c.RESET} point{'s' if life_pt_gain > 1 else ''} de vie ❤️. Vie: {self._player.life_status}.")
 
         else:   #Just a safety display. This else should never be performed becaue every valid player_answer are already managed
             logging.error("Un événement qui ne devait pas se produire est survenu: le _tour_player semble mal géré.")
@@ -151,16 +159,24 @@ class RoleplayGame:
 
 
     def _tour_ennemy(self, ennemy: Character):
-        
-        # Action choice
+        """Manage the ennemy tour
+        Certain ennemy can drink potion so EnnemiAI need to decide whick action to take between Attack and Drink potion.
+
+        Args:
+            ennemy (Character): _description_
+        """
+
+        # Action choice: Attack or Drink a potion if possible
         ennemy_ai = EnnemyAI(ennemy)
         action_to_do = ennemy_ai.decide_action()
         
         # Action management
+        #   Attack
         if action_to_do == Character.ACTION_ATTACK:
-           damage = ennemy.attacks(self.player)
+           damage = ennemy.attacks(self._player)
            print(f"{ennemy.name} vous attaque et fait {c.RED}{damage}{c.RESET} point{"s" if damage > 1 else ''} de dommage ⚔️")
 
+        #   Drink potion
         elif action_to_do == Character.ACTION_DRINKPOTION:
             life_pt_gain = ennemy.drink_a_potion()
 
@@ -170,15 +186,31 @@ class RoleplayGame:
                 print(f"{ennemy.name} récupère {c.GREEN}{life_pt_gain}{c.RESET} point{'s' if life_pt_gain > 1 else ''} de vie ❤️. Vie: {ennemy.life_status}).")
 
 
+    def _finalize_end(self):
+        """Display the final gameover status result"""
+
+        print(f"{c.BLUE}{'-' * 20} 🏁 Fin de partie 🏁 {'-' * 50}{c.RESET}")
+        
+        if self._player.is_dead:
+            print("Vous avez PERDU 💀")
+        else:
+            print("Vous avez GAGNÉ 🏆!")
+
+
     def _display_ennemies(self):
-        print(f"Liste des ennemies:")
-        for i, ennemy in enumerate(self.ennemies):
-            print(f"\t{i+1}. {ennemy}")
+        """Display the ordered list of ennemies. Useful to let the user choose who he wants to attack"""
+        print(f"Liste des ennemies:\n")
+        print('\n'.join({ f"\t{i+1}. {ennemy}" for i, ennemy in enumerate(self._ennemies) }))
 
 
     @property
     def _all_ennemies_are_dead(self) -> bool:
-        for ennemy in self.ennemies:
+        """Get the final status about dead ennemies. Read-only property
+
+        Returns:
+            bool: True if all the ennemies are dead, False otherwise
+        """
+        for ennemy in self._ennemies:
             if not ennemy.is_dead:
                 return False
         return True
@@ -186,12 +218,25 @@ class RoleplayGame:
 
     @property
     def gameover(self) -> bool:
-        return self._all_ennemies_are_dead or self.player.is_dead
+        """Get the status of the game. Read-only property
+
+        Returns:
+            bool: True if all ennemies are dead or if the player is dead, False otherwise
+        """
+        return self._all_ennemies_are_dead or self._player.is_dead
 
 
     @classmethod
     def default_settings(cls, player_name = "Joueur", ennemy_name = "Ennemi"):
+        """A shortcut to create a valid default game setup
 
+        Args:
+            player_name (str, optional): Player name. Defaults to "Joueur".
+            ennemy_names (tuple, optional): Ennemy names. Defaults to ("Ennemi 1","Ennemi 2").
+
+        Returns:
+            _type_: A RoleplayGame ready to be play.
+        """
         player = Character(player_name, 
                     CharacterStats(max_life=DEFAULT_LIFE_PTS_INIT_PLAYER, 
                                    attack_min=DEFAULT_ATTACK_PLAYER_MIN,
@@ -214,7 +259,15 @@ class RoleplayGame:
 
     @classmethod
     def settings_with_two_weak_ennemies(cls, player_name = "Joueur", ennemy_names = ("Ennemi 1","Ennemi 2")):
+        """A shortcut to create a valid setup game with two weak ennemies and a default player
 
+        Args:
+            player_name (str, optional): Player name. Defaults to "Joueur".
+            ennemy_names (tuple, optional): Ennemy names. Defaults to ("Ennemi 1","Ennemi 2").
+
+        Returns:
+            _type_: A RoleplayGame ready to be play.
+        """
         player = Character(player_name, 
                     CharacterStats(max_life=DEFAULT_LIFE_PTS_INIT_PLAYER, 
                                    attack_min=DEFAULT_ATTACK_PLAYER_MIN,

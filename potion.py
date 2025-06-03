@@ -39,14 +39,12 @@ class Potion:
             return (f"Une très belle bouteille vide (Potion {constants_color.YELLOW}{self.id}{constants_color.RESET}).")
         else:
             return (f"{constants_color.BLUE}Potion {self.id}{constants_color.RESET} pouvant redonner entre {constants_color.GREEN}{self.min_recup}{constants_color.RESET} and {constants_color.GREEN}{self.max_recup}{constants_color.RESET} points de vie.")
-        
+
+
     def __repr__(self):
         return f"Potion(min_recup={self.min_recup}, max_recup={self.max_recup}) - auto id : {self.id}"
 
         
-    def __del__(self):
-        logging.info(f'Destruction de la potion {self.id}!')
-
     def drink(self) -> int:
         """Action to drink the potion. Can be call only once.
 
@@ -64,8 +62,10 @@ class Potion:
             logging.info("Tentative de boire une potion vide!")
             raise EmptyPotionError("Cannot drink an empty potion.")
 
+
 class EmptyPotionError(Exception):
     pass
+
 
 class PoisonPotionError(Exception):
     pass

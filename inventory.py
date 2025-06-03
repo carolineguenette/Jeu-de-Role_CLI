@@ -8,6 +8,7 @@ class Bag(list):
         """Create an empty Bag"""
         self = []
 
+
     def add(self, new_object: object):
         """Add the new object in the bag.
 
@@ -18,7 +19,8 @@ class Bag(list):
             self.extend(new_object)
         else:
             self.append(new_object)
-    
+
+
     def get(self, object_to_remove: object):
         """ Get an object from the bag.
 
@@ -34,6 +36,7 @@ class Bag(list):
         except ValueError:
             logging.info("Object not found in the bag.")
             return None
+
 
     def get_a_potion(self):
         """Return the first Potion found in the bag
@@ -79,6 +82,7 @@ class Bag(list):
         potions_bag = cls()
         potions_bag.add( [Potion(potion_min_recup, potion_max_recup) for _ in range(nb_of_potions) ])
         return potions_bag
+
 
 if __name__ == "__main__":
 

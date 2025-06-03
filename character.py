@@ -9,6 +9,11 @@ import constants_color as c
 
 @dataclass
 class CharacterStats:
+    """Dataclass of Stat's Character and some information
+
+    Raises:
+        InvalidNameError: A ValueError. Stat cannot be negative and min must be lower than max
+    """
     max_life: int
     attack_max: int
     attack_min: int
@@ -26,11 +31,16 @@ class CharacterStats:
         
 
 class Character:
+    """A Character for the RoleplayGame
 
+    Raises:
+        InvalidNameError: The name cannot be an empty string
+        DeadCharacterError: Action cannot be done if the character is dead
+        UnabledToDrinkPotionError: There is no potion in inventory
+    """
     POTION_NOT_FOUND = -1
     ACTION_ATTACK = '1'
     ACTION_DRINKPOTION = '2'
-    ACTIONS = (ACTION_ATTACK, ACTION_DRINKPOTION)
 
     def __init__(self, name: str, stats: CharacterStats, inventory: Bag):
         """Create a Character with his stats and an inventory
@@ -49,11 +59,16 @@ class Character:
 
 
     def __str__(self):
-        nb_potions = len(self.inventory)     #Inventory can only contains Potion object for now.
+        """Get a description of the character, without details about his inventory
+        Returns:
+            _type_: return a one line string about the caracter
+                ex: Joueur a 50/50 pts de vie, fait des attaques enre 10 et 15 pts de dommage et a 3 potions.
+        """
         
         #Temporary variables for lisibility (long string caracters!)
         attack_info = f"des attaques entre {c.RED}{self.stats.attack_min}{c.RESET} et {c.RED}{self.stats.attack_max}{c.RESET} pts de dommage"
-        
+        nb_potions = len(self.inventory)     #Inventory can only contains Potion object for now.
+
         if self.stats.can_drink_potion:
             drink_potion_status = f"a {c.CYAN}{nb_potions}{c.RESET} potion{'s' if nb_potions > 1 else ''}"
         else:
@@ -64,6 +79,10 @@ class Character:
 
     @property
     def who(self) -> str:
+        """Get all informations about the character. Read-only stats
+        Returns:
+            str: A multiple lines string about the character, with inventory details
+        """
         infos = f"{str(self)}"
         infos += ''.join([f"\n  {obj}" for obj in self.inventory])
         return infos
@@ -73,20 +92,23 @@ class Character:
     def name(self):
         return c.YELLOW + self._name + c.RESET
     
+
     @name.setter
     def name(self, name_value: str):
         if not name_value:
             raise InvalidNameError("The name cannot be an empty string")
         self._name = name_value
 
+
     @property
     def is_dead(self) -> bool:
-        """Statut of character
+        """Status of character
 
         Returns:
             bool: True if alive (current_life > 0), False otherwise
         """
         return self.current_life <= 0
+
 
     @property
     def life_status(self) -> str:
@@ -118,8 +140,7 @@ class Character:
 
     def _be_attacked(self, damage:int):
         """Action to do if the character is been attacked. Internal method
-        Create as an intermediate in case... if stats is enhance with some protection value, by example.
-        By now. damage is apply directly on Caracter
+        By now, damage is apply directly on Caracter
 
         Args:
             dammage (int): _description_
@@ -162,6 +183,14 @@ class Character:
 
     @classmethod
     def default_player(cls, name: str = "Joueur"):
+        """A shorcut to create a Default Player Character
+
+        Args:
+            name (str, optional): _description_. Defaults to "Joueur".
+
+        Returns:
+            Character: the character with predefined stats
+        """
         return Character(name, 
                        CharacterStats(max_life=50, attack_min=5, attack_max=10, can_drink_potion=True), 
                        Bag.with_potions(3,15, 50))
@@ -169,6 +198,14 @@ class Character:
     
     @classmethod
     def player_without_any_potion(cls, name: str = "Joueur"):
+        """A shorcut to create a Player Character with an empmty inventory
+
+        Args:
+            name (str, optional): _description_. Defaults to "Joueur".
+
+        Returns:
+            Character: the character with predefined stats
+        """
         return Character(name, 
                        CharacterStats(max_life=50, attack_min=5, attack_max=10, can_drink_potion=True), 
                        Bag())        
@@ -180,7 +217,7 @@ class Character:
         The default ennemy cannot drink potion.
 
         Returns:
-            Character: A Gobelin Character
+            Character: A Default ennemy Character
         """
         stats = CharacterStats(max_life=50, attack_min=5, attack_max=15, can_drink_potion=False)
         return cls(name, stats,  Bag())
@@ -191,7 +228,7 @@ class Character:
         """Shortcut to create a Dragon character
 
         Returns:
-            _type_: A Dragon Character
+            Character: A Dragon Character
         """
         stats = CharacterStats(max_life=350, attack_min=0, attack_max=60, can_drink_potion=False)
         return cls(name, stats,  Bag()) 

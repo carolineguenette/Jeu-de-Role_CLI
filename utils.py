@@ -1,5 +1,18 @@
+"""Utils methods
+"""
+
 def get_valid_user_input(question: str, valid_answers: tuple) -> str:
-    # NOTES: POUrrait retourner le string converti directement.
+    """Ask question to user and loop until the answer is in valid_answers.
+    Print "Choix invalide" as feedback if the answer is not valid
+
+    Args:
+        question (str): The str give to the input method
+        valid_answers (tuple): Every acceptable answer to the question. Must be a type convertible to str.
+
+    Returns:
+        str: str entered by the user, that is in the valid_answers
+    """
+    #Init
     valid_str_answers = []
 
     #Convert valid_answers to str to be able to compare with input return
@@ -20,6 +33,15 @@ def get_valid_user_input(question: str, valid_answers: tuple) -> str:
 
 
 def get_nonempty_string_input(question: str) -> str:
+    """Ask question to user and loop until the answer is not a empty string.
+    Print 'Valeur invalide (chaîne de caractère vide)' as feedback if invalid entry
+
+    Args:
+        question (str): The str give to the input method
+ 
+    Returns:
+        str: the user answer, that will not be an empty string
+    """
     ask_again = True
     while ask_again:
         answer = input(question)
@@ -31,7 +53,18 @@ def get_nonempty_string_input(question: str) -> str:
     return answer
 
 
-def get_int_input(question: str, nb_of_int: int = 1, valid_higher_than_0: bool = True, valid_ascending_order: bool = False) -> list[int]:
+def get_valid_int_input(question: str, nb_of_int: int = 1, valid_higher_than_0: bool = True, valid_ascending_order: bool = False) -> list[int]:
+    """_summary_
+
+    Args:
+        question (str):  The str display to the user (in the input method)
+        nb_of_int (int, optional): how many int is expected, separated by a space. Defaults to 1.
+        valid_higher_than_0 (bool, optional): If True, method will validate that the number is not 0. Defaults to True.
+        valid_ascending_order (bool, optional): If T,rue, method will validate that the first number is lower than the second, etc (ascending order). Defaults to False.
+
+    Returns:
+        list[int]: A list of nb_of_int integers
+    """
     int_answers = []
     is_valid = False
 
@@ -91,13 +124,13 @@ if __name__ == "__main__":
 
 #    answer = get_valid_user_input("Choix option (1 ou 2): ", (1,2))
 #    answer = get_nonempty_string_input("Entrer votre nom: ")
-    answer = get_int_input("Entrer 1 int: ", 1, valid_higher_than_0=True)
+    answer = get_valid_int_input("Entrer 1 int: ", 1, valid_higher_than_0=True)
     print(answer)
 
-    answer = get_int_input("Entrer 2 int (x y): ", 2, valid_higher_than_0=True, valid_ascending_order=False)
+    answer = get_valid_int_input("Entrer 2 int (x y): ", 2, valid_higher_than_0=True, valid_ascending_order=False)
     print(answer)
 
-    answer = get_int_input("Entrer 3 int séparés par des espaces: ", 3, valid_higher_than_0=True, valid_ascending_order=True)
+    answer = get_valid_int_input("Entrer 3 int séparés par des espaces: ", 3, valid_higher_than_0=True, valid_ascending_order=True)
     print(answer)
 
 
