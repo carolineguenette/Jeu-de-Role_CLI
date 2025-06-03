@@ -5,7 +5,8 @@ from typing import Self
 
 from src.inventory import Bag
 from src.potion import Potion
-import src.constants_color as c
+from src.exceptions import InvalidNameError, InvalidStatsError, DeadCharacterError, UnabledToDrinkPotionError
+import src.constants as c
 
 @dataclass
 class CharacterStats:
@@ -260,17 +261,6 @@ class Character:
         return cls(name, stats, bag)
     
 
-class InvalidNameError(ValueError):
-    pass
-    
-class InvalidStatsError(ValueError):
-    pass
-
-class DeadCharacterError(Exception):
-    pass
-
-class UnabledToDrinkPotionError(Exception):
-    pass
 
 
 if __name__ == "__main__":

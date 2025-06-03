@@ -6,7 +6,7 @@
 from src.utils import get_valid_user_input, get_nonempty_string_input, get_valid_int_input
 from src.character import Character
 from src.potion import Potion
-import src.constants_color as c
+import src.constants as c
 
 class SetupGameManually():
 

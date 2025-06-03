@@ -6,18 +6,7 @@ from src.character import Character, CharacterStats
 from src.ennemy_ai import EnnemyAI
 from src.inventory import Bag
 from src.utils import get_valid_user_input
-import src.constants_color as c
-
-DEFAULT_LIFE_PTS_INIT_PLAYER = 50
-DEFAULT_LIFE_PTS_INIT_ENNEMY = 50
-DEFAULT_POTION_NB_INIT_JOUEUR = 3
-DEFAULT_POTION_NB_INIT_ENNEMY = 0
-DEFAULT_POTION_RECUP_MIN = 15
-DEFAULT_POTION_RECUP_MAX = 50
-DEFAULT_ATTACK_PLAYER_MIN = 5
-DEFAULT_ATTACK_PLAYER_MAX = 10
-DEFAULT_ATTACK_ENNEMY_MIN = 5
-DEFAULT_ATTACK_ENNEMY_MAX = 15
+import src.constants as c
 
 class RoleplayGame:
 
@@ -238,19 +227,19 @@ class RoleplayGame:
             _type_: A RoleplayGame ready to be play.
         """
         player = Character(player_name, 
-                    CharacterStats(max_life=DEFAULT_LIFE_PTS_INIT_PLAYER, 
-                                   attack_min=DEFAULT_ATTACK_PLAYER_MIN,
-                                   attack_max=DEFAULT_ATTACK_PLAYER_MAX, 
+                    CharacterStats(max_life=c.DEFAULT_LIFE_PTS_INIT_PLAYER, 
+                                   attack_min=c.DEFAULT_ATTACK_PLAYER_MIN,
+                                   attack_max=c.DEFAULT_ATTACK_PLAYER_MAX, 
                                    can_drink_potion=True),
-                    Bag.with_potions(nb_of_potions=DEFAULT_POTION_NB_INIT_JOUEUR, 
-                                    potion_min_recup=DEFAULT_POTION_RECUP_MIN,
-                                    potion_max_recup=DEFAULT_POTION_RECUP_MAX)
+                    Bag.with_potions(nb_of_potions=c.DEFAULT_POTION_NB_INIT_JOUEUR, 
+                                    potion_min_recup=c.DEFAULT_POTION_RECUP_MIN,
+                                    potion_max_recup=c.DEFAULT_POTION_RECUP_MAX)
                 )
         
         ennemy = Character(ennemy_name, 
-                    CharacterStats(max_life=DEFAULT_LIFE_PTS_INIT_ENNEMY, 
-                                   attack_min=DEFAULT_ATTACK_ENNEMY_MIN,
-                                   attack_max=DEFAULT_ATTACK_ENNEMY_MAX, 
+                    CharacterStats(max_life=c.DEFAULT_LIFE_PTS_INIT_ENNEMY, 
+                                   attack_min=c.DEFAULT_ATTACK_ENNEMY_MIN,
+                                   attack_max=c.DEFAULT_ATTACK_ENNEMY_MAX, 
                                    can_drink_potion=False),
                     Bag())
 
@@ -269,13 +258,13 @@ class RoleplayGame:
             _type_: A RoleplayGame ready to be play.
         """
         player = Character(player_name, 
-                    CharacterStats(max_life=DEFAULT_LIFE_PTS_INIT_PLAYER, 
-                                   attack_min=DEFAULT_ATTACK_PLAYER_MIN,
-                                   attack_max=DEFAULT_ATTACK_PLAYER_MAX, 
+                    CharacterStats(max_life=c.DEFAULT_LIFE_PTS_INIT_PLAYER, 
+                                   attack_min=c.DEFAULT_ATTACK_PLAYER_MIN,
+                                   attack_max=c.DEFAULT_ATTACK_PLAYER_MAX, 
                                    can_drink_potion=True),
-                    Bag.with_potions(nb_of_potions=DEFAULT_POTION_NB_INIT_JOUEUR, 
-                                potion_min_recup=DEFAULT_POTION_RECUP_MIN,
-                                potion_max_recup=DEFAULT_POTION_RECUP_MAX)
+                    Bag.with_potions(nb_of_potions=c.DEFAULT_POTION_NB_INIT_JOUEUR, 
+                                potion_min_recup=c.DEFAULT_POTION_RECUP_MIN,
+                                potion_max_recup=c.DEFAULT_POTION_RECUP_MAX)
                 )
         
         ennemy1 = Character(ennemy_names[0], 
@@ -284,8 +273,8 @@ class RoleplayGame:
                                    attack_max=8, 
                                    can_drink_potion=True),
                     Bag.with_potions(nb_of_potions=1,
-                                    potion_min_recup=DEFAULT_POTION_RECUP_MIN,
-                                    potion_max_recup=DEFAULT_POTION_RECUP_MAX))
+                                    potion_min_recup=c.DEFAULT_POTION_RECUP_MIN,
+                                    potion_max_recup=c.DEFAULT_POTION_RECUP_MAX))
 
         ennemy2 = Character(ennemy_names[1], 
                     CharacterStats(max_life=20, 

@@ -1,7 +1,8 @@
 from random import randint
 import logging
 
-import src.constants_color as c
+from src.exceptions import EmptyPotionError, PoisonPotionError
+import src.constants as c
 
 class Potion:
     """ A Potion that will give back a random number of life points after drinking
@@ -61,14 +62,6 @@ class Potion:
         else:
             logging.info("Tentative de boire une potion vide!")
             raise EmptyPotionError("Cannot drink an empty potion.")
-
-
-class EmptyPotionError(Exception):
-    pass
-
-
-class PoisonPotionError(Exception):
-    pass
 
 
 if __name__ == "__main__":
