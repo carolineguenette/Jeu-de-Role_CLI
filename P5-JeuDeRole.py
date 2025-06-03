@@ -1,3 +1,6 @@
+"""First version in functionnal and without CLI configuration. 
+This module is not used by the main.py."""
+
 from random import randint
 
 POINTS_VIE_INIT_JOUEUR = 50
