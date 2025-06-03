@@ -116,7 +116,7 @@ class RoleplayGame:
         #Tour end: display life points of each Character
         print("Récapitulatif du tour:")
         print("\t"+ self._player.life_status)
-        print(''.join(["\t"+ ennemy.life_status for ennemy in self._ennemies]))
+        print('\n'.join(["\t"+ ennemy.life_status for ennemy in self._ennemies]))
 
 
     def _tour_player(self):
@@ -199,8 +199,8 @@ class RoleplayGame:
 
     def _display_ennemies(self):
         """Display the ordered list of ennemies. Useful to let the user choose who he wants to attack"""
-        print(f"Liste des ennemies:\n")
-        print('\n'.join({ f"\t{i+1}. {ennemy}" for i, ennemy in enumerate(self._ennemies) }))
+        print(f"Liste des ennemies:")
+        print('\n'.join( [f"\t{i+1}. {ennemy}" for i, ennemy in enumerate(self._ennemies) ]))
 
 
     @property

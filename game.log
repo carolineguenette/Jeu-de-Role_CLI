@@ -12,36 +12,20 @@ Ennemi(s):
   [33mEnnemi 1[0m a [32m20[0m/20 pts de vie, fait des attaques entre [31m0[0m et [31m8[0m pts de dommage et a [36m1[0m potion.
     [34mPotion 4[0m pouvant redonner entre [32m15[0m and [32m50[0m points de vie.
   [33mEnnemi 2[0m a [32m20[0m/20 pts de vie, fait des attaques entre [31m0[0m et [31m8[0m pts de dommage et a [36m0[0m potion.
-INFO:root:La potion 1 est bue...
-INFO:root:[33mEnnemi 1[0m attacks [33mJoueur[0m et lui fait 2 points de dommage.
-INFO:root:[33mEnnemi 2[0m attacks [33mJoueur[0m et lui fait 3 points de dommage.
-INFO:root:[33mEnnemi 1[0m attacks [33mJoueur[0m et lui fait 3 points de dommage.
-INFO:root:[33mEnnemi 2[0m attacks [33mJoueur[0m et lui fait 6 points de dommage.
-INFO:root:La potion 2 est bue...
-INFO:root:[33mEnnemi 1[0m attacks [33mJoueur[0m et lui fait 4 points de dommage.
-INFO:root:[33mEnnemi 2[0m attacks [33mJoueur[0m et lui fait 0 point de dommage.
-INFO:root:[33mEnnemi 1[0m attacks [33mJoueur[0m et lui fait 0 point de dommage.
-INFO:root:[33mEnnemi 2[0m attacks [33mJoueur[0m et lui fait 0 point de dommage.
-INFO:root:La potion 3 est bue...
-INFO:root:[33mEnnemi 1[0m attacks [33mJoueur[0m et lui fait 2 points de dommage.
-INFO:root:[33mEnnemi 2[0m attacks [33mJoueur[0m et lui fait 4 points de dommage.
-INFO:root:[33mEnnemi 1[0m attacks [33mJoueur[0m et lui fait 8 points de dommage.
-INFO:root:[33mEnnemi 2[0m attacks [33mJoueur[0m et lui fait 3 points de dommage.
-INFO:root:Impossible de boire une potion car il n'y en a plus.
-INFO:root:[33mEnnemi 1[0m attacks [33mJoueur[0m et lui fait 0 point de dommage.
-INFO:root:[33mEnnemi 2[0m attacks [33mJoueur[0m et lui fait 0 point de dommage.
-INFO:root:[33mEnnemi 1[0m attacks [33mJoueur[0m et lui fait 6 points de dommage.
-INFO:root:[33mEnnemi 2[0m attacks [33mJoueur[0m et lui fait 0 point de dommage.
-INFO:root:Impossible de boire une potion car il n'y en a plus.
+INFO:root:[33mJoueur[0m attacks [33mEnnemi 1[0m et lui fait 7 points de dommage.
 INFO:root:[33mEnnemi 1[0m attacks [33mJoueur[0m et lui fait 1 points de dommage.
-INFO:root:[33mEnnemi 2[0m attacks [33mJoueur[0m et lui fait 0 point de dommage.
-INFO:root:[33mEnnemi 1[0m attacks [33mJoueur[0m et lui fait 2 points de dommage.
-INFO:root:[33mEnnemi 2[0m attacks [33mJoueur[0m et lui fait 2 points de dommage.
-INFO:root:Impossible de boire une potion car il n'y en a plus.
-INFO:root:[33mEnnemi 1[0m attacks [33mJoueur[0m et lui fait 2 points de dommage.
-INFO:root:[33mEnnemi 2[0m attacks [33mJoueur[0m et lui fait 6 points de dommage.
-INFO:root:[33mEnnemi 1[0m attacks [33mJoueur[0m et lui fait 3 points de dommage.
-INFO:root:[33mEnnemi 2[0m attacks [33mJoueur[0m et lui fait 5 points de dommage.
-INFO:root:Impossible de boire une potion car il n'y en a plus.
-INFO:root:[33mEnnemi 1[0m attacks [33mJoueur[0m et lui fait 0 point de dommage.
+INFO:root:[33mEnnemi 2[0m attacks [33mJoueur[0m et lui fait 1 points de dommage.
+INFO:root:[33mJoueur[0m attacks [33mEnnemi 1[0m et lui fait 10 points de dommage.
+INFO:root:La potion 4 est bue...
 INFO:root:[33mEnnemi 2[0m attacks [33mJoueur[0m et lui fait 7 points de dommage.
+INFO:root:[33mJoueur[0m attacks [33mEnnemi 1[0m et lui fait 5 points de dommage.
+INFO:root:[33mEnnemi 2[0m attacks [33mJoueur[0m et lui fait 1 points de dommage.
+INFO:root:[33mJoueur[0m attacks [33mEnnemi 1[0m et lui fait 6 points de dommage.
+INFO:root:[33mEnnemi 2[0m attacks [33mJoueur[0m et lui fait 4 points de dommage.
+INFO:root:[33mJoueur[0m attacks [33mEnnemi 1[0m et lui fait 10 points de dommage.
+INFO:root:[33mEnnemi 2[0m attacks [33mJoueur[0m et lui fait 7 points de dommage.
+INFO:root:[33mJoueur[0m attacks [33mEnnemi 2[0m et lui fait 7 points de dommage.
+INFO:root:[33mEnnemi 2[0m attacks [33mJoueur[0m et lui fait 7 points de dommage.
+INFO:root:[33mJoueur[0m attacks [33mEnnemi 2[0m et lui fait 7 points de dommage.
+INFO:root:[33mEnnemi 2[0m attacks [33mJoueur[0m et lui fait 8 points de dommage.
+INFO:root:[33mJoueur[0m attacks [33mEnnemi 2[0m et lui fait 10 points de dommage.
