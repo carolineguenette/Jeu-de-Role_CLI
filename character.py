@@ -41,6 +41,7 @@ class Character:
     POTION_NOT_FOUND = -1
     ACTION_ATTACK = '1'
     ACTION_DRINKPOTION = '2'
+    ACTIONS = (ACTION_ATTACK, ACTION_DRINKPOTION)
 
     def __init__(self, name: str, stats: CharacterStats, inventory: Bag):
         """Create a Character with his stats and an inventory

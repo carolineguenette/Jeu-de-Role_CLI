@@ -83,9 +83,9 @@ class RoleplayGame:
     def _tour(self):
         """Manage the game playing tour. Check if the pass tour rule must be apply. 
         Player plays, then ennemies. Display the tour recap at the end of the tour."""
-        self.tour_nb += 1
+        self._tour_nb += 1
 
-        print(f"{c.BLUE}{'-' * 20} Tour {self.tour_nb} {'-' * 70}{c.RESET}")
+        print(f"{c.BLUE}{'-' * 20} Tour {self._tour_nb} {'-' * 70}{c.RESET}")
 
         #------------------------
         #Player play always first
