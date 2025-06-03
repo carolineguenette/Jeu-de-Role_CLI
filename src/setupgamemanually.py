@@ -3,10 +3,10 @@
 - get is_valid to check if a valid RolePlayGame setup has been created correctly
 - get config to have a string representation of the actual setup
 """
-from utils import get_valid_user_input, get_nonempty_string_input, get_valid_int_input
-from character import Character
-from potion import Potion
-import constants_color as c
+from src.utils import get_valid_user_input, get_nonempty_string_input, get_valid_int_input
+from src.character import Character
+from src.potion import Potion
+import src.constants_color as c
 
 class SetupGameManually():
 

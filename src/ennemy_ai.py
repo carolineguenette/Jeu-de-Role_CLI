@@ -1,7 +1,7 @@
 """A really simple way to give so AI to an ennemy"""
 from random import randint
 
-from character import Character
+from src.character import Character
 
 class EnnemyAI():
     """Simulate actions choice for a Ennemy Character

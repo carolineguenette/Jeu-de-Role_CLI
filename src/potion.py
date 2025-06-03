@@ -1,7 +1,7 @@
 from random import randint
 import logging
 
-import constants_color
+import src.constants_color as c
 
 class Potion:
     """ A Potion that will give back a random number of life points after drinking
@@ -36,9 +36,9 @@ class Potion:
 
     def __str__(self):
         if self.is_empty:
-            return (f"Une très belle bouteille vide (Potion {constants_color.YELLOW}{self.id}{constants_color.RESET}).")
+            return (f"Une très belle bouteille vide (Potion {c.YELLOW}{self.id}{c.RESET}).")
         else:
-            return (f"{constants_color.BLUE}Potion {self.id}{constants_color.RESET} pouvant redonner entre {constants_color.GREEN}{self.min_recup}{constants_color.RESET} and {constants_color.GREEN}{self.max_recup}{constants_color.RESET} points de vie.")
+            return (f"{c.BLUE}Potion {self.id}{c.RESET} pouvant redonner entre {c.GREEN}{self.min_recup}{c.RESET} and {c.GREEN}{self.max_recup}{c.RESET} points de vie.")
 
 
     def __repr__(self):

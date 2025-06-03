@@ -6,9 +6,9 @@
 """
 import copy
 
-from game import RoleplayGame
-from setupgamemanually import SetupGameManually
-from utils import get_valid_user_input
+from src.game import RoleplayGame
+from src.setupgamemanually import SetupGameManually
+from src.utils import get_valid_user_input
 
 
 class SetupGame:

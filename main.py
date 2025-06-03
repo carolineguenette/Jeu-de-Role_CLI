@@ -1,9 +1,8 @@
 """Main entry point of the program.
 """
 
-
-from setupgame import SetupGame
-from utils import get_valid_user_input
+from src.setupgame import SetupGame
+from src.utils import get_valid_user_input
 
 def main():
     """Let the user choose or create a setup game and play this game. 

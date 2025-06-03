@@ -3,9 +3,9 @@ from random import randint
 import logging
 from typing import Self
 
-from inventory import Bag
-from potion import Potion
-import constants_color as c
+from src.inventory import Bag
+from src.potion import Potion
+import src.constants_color as c
 
 @dataclass
 class CharacterStats:

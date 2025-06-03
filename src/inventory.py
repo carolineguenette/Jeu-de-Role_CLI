@@ -1,6 +1,6 @@
 import logging
 
-from potion import Potion
+from src.potion import Potion
 
 class Bag(list):
 

@@ -2,11 +2,11 @@
 
 import logging
 
-from character import Character, CharacterStats
-from ennemy_ai import EnnemyAI
-from inventory import Bag
-from utils import get_valid_user_input
-import constants_color as c
+from src.character import Character, CharacterStats
+from src.ennemy_ai import EnnemyAI
+from src.inventory import Bag
+from src.utils import get_valid_user_input
+import src.constants_color as c
 
 DEFAULT_LIFE_PTS_INIT_PLAYER = 50
 DEFAULT_LIFE_PTS_INIT_ENNEMY = 50
@@ -54,7 +54,7 @@ class RoleplayGame:
                 print(self.settings_info)
 
             while not self.gameover:
-                self._tour()
+                self._turn()
             
             self._finalize_end()
         else:
@@ -80,7 +80,7 @@ class RoleplayGame:
         return str
 
 
-    def _tour(self):
+    def _turn(self):
         """Manage the game playing tour. Check if the pass tour rule must be apply. 
         Player plays, then ennemies. Display the tour recap at the end of the tour."""
         self._tour_nb += 1
@@ -91,7 +91,7 @@ class RoleplayGame:
         #Player play always first
         print("C'est votre tour!")
         if not self._player.took_a_potion:
-            self._tour_player()
+            self._player_turn()
 
         else:
             print(f"{c.MAGENTA}Vous{c.RESET} passez votre tour puisque vous avez fouillé votre sac pour une potion au tour précédent ⌛.")
@@ -105,7 +105,7 @@ class RoleplayGame:
             if not ennemy.is_dead:
 
                 if not ennemy.took_a_potion:
-                    self._tour_ennemy(ennemy)
+                    self._ennemy_turn(ennemy)
                 else:
                     print(f"{ennemy.name} passe son tour puisqu'il a fouillé son sac pour une potion au tour précédent ⌛.")
 
@@ -119,7 +119,7 @@ class RoleplayGame:
         print('\n'.join(["\t"+ ennemy.life_status for ennemy in self._ennemies]))
 
 
-    def _tour_player(self):
+    def _player_turn(self):
         """Ask action to do to user (between Attack and Drink a potion) and manage it
         """
 
@@ -158,7 +158,7 @@ class RoleplayGame:
             print("Hein? Ça ne devrait pas se produire ça")
 
 
-    def _tour_ennemy(self, ennemy: Character):
+    def _ennemy_turn(self, ennemy: Character):
         """Manage the ennemy tour
         Certain ennemy can drink potion so EnnemiAI need to decide whick action to take between Attack and Drink potion.
 
