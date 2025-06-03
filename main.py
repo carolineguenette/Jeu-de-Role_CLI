@@ -1,16 +1,20 @@
 """Main entry point of the program.
 """
+
+
 from setupgame import SetupGame
 from utils import get_valid_user_input
 
-
-if __name__ == "__main__":
+def main():
     """Let the user choose or create a setup game and play this game. 
     Loop until user choose to stop the program. The user can choose to use the same previous setup or new setup."""
+    
     print("BIENVENUE - JEU DE RÔLE EN LIGNE DE COMMANDE")
     
+    #Init
     setup = SetupGame()
 
+    #Main loop: plain again
     user_want_to_play = True
     user_want_a_new_setup = True
     while user_want_to_play:
@@ -41,4 +45,9 @@ if __name__ == "__main__":
             user_want_a_new_setup = not get_valid_user_input("Souhaitez-vous jouer avec les mêmes paramètres (o/n)? ", ('o', 'n')) == 'o'
             print()
 
+
+
+
+if __name__ == "__main__":
+    main()
     
