@@ -7,4 +7,12 @@ recodé en POO avec quelques ajouts aux règles de base
 # Développement
 
 - Python 3.13.3
-- Aucune libraire tierce
+
+# Librairies tiersses utilisées
+
+- pytest
+- pytest-html
+
+# Run
+
+python main.py

@@ -7,7 +7,7 @@
 import copy
 
 from src.game import RoleplayGame
-from src.setupgamemanually import SetupGameManually
+from src.setup_game_manually import SetupGameManually
 from src.utils import get_valid_user_input
 
 

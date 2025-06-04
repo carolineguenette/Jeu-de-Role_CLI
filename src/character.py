@@ -114,7 +114,7 @@ class Character:
 
     @property
     def life_status(self) -> str:
-        return f"{self.name} a {c.GREEN}{self.current_life}{c.RESET}/{self.stats.max_life} pts de vie"
+        return f"{self.name} a {c.GREEN}{self.current_life}{c.RESET}/{self.stats.max_life} pts de vie{' 💀' if self.is_dead else ''}"
 
 
     def attacks(self, ennemy:Self) -> int:

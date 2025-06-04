@@ -1,7 +1,7 @@
 """Main entry point of the program.
 """
 
-from src.setupgame import SetupGame
+from src.setup_game import SetupGame
 from src.utils import get_valid_user_input
 
 def main():

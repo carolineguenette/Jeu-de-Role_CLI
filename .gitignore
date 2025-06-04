@@ -1,3 +1,6 @@
 __pycache__
+.pytest_cache
+_venv-jdr
 *.log
-src/*.log
+src/tests/assets
+src/tests/*.html

@@ -35,15 +35,15 @@ class Potion:
             raise PoisonPotionError(f"Magic potion do not exist (hum well...) so Potion(min_recup={min_recup}, max_recup={max_recup}) cannot be created.\n\tInit values must be : min_recup >= 0, max_recup >= 0 and min_recup <= max_recup")
         
 
-    def __str__(self):
+    def __str__(self) -> str:
         if self.is_empty:
             return (f"Une très belle bouteille vide (Potion {c.YELLOW}{self.id}{c.RESET}).")
         else:
-            return (f"{c.BLUE}Potion {self.id}{c.RESET} pouvant redonner entre {c.GREEN}{self.min_recup}{c.RESET} and {c.GREEN}{self.max_recup}{c.RESET} points de vie.")
+            return (f"{c.BLUE}Potion {self.id}{c.RESET} pouvant redonner entre {c.GREEN}{self.min_recup}{c.RESET} et {c.GREEN}{self.max_recup}{c.RESET} points de vie.")
 
 
-    def __repr__(self):
-        return f"Potion(min_recup={self.min_recup}, max_recup={self.max_recup}) - auto id : {self.id}"
+    def __repr__(self) -> str:
+        return f"Potion({self.min_recup}, {self.max_recup})"
 
         
     def drink(self) -> int:
