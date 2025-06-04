@@ -6,7 +6,7 @@ Tous les modules de tests sont dans src/tests
 
 - Python 3.13.3
 
-# Librairies tiersses utilisées
+# Librairies tierces utilisées
 
 - pytest
 - pytest-html
