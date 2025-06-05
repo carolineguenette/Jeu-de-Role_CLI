@@ -8,7 +8,7 @@ recodé en POO avec quelques ajouts aux règles de base
 
 - Python 3.13.3
 
-# Librairies tiersses utilisées
+# Librairies tierces utilisées
 
 - pytest
 - pytest-html

@@ -4,9 +4,12 @@ import logging
 
 from src.character import Character, CharacterStats
 from src.ennemy_ai import EnnemyAI
-from src.inventory import Bag
+from src.inventory import Inventory
 from src.utils import get_valid_user_input
 import src.constants as c
+
+logger = logging.getLogger("__name__")
+
 
 class RoleplayGame:
 
@@ -20,8 +23,9 @@ class RoleplayGame:
         self._player = player_character
         self._ennemies = ennemy_characters
         self._tour_nb = 0
-        logging.debug("Creation of RoleplayGame with the followings parameters:")
-        logging.debug(self.settings_info)
+
+        logger.debug("Creation of RoleplayGame with the followings parameters:")
+        logger.debug(self.settings_info)
 
 
     def play(self, print_settings = True):
@@ -34,20 +38,19 @@ class RoleplayGame:
             ValueError: player and ennnemies are not properly setup
         """
         #Valid if game setup is ok
-        if self._player and len(self._ennemies) > 0:
+        if not self._player or len(self._ennemies) <= 0:
+            raise ValueError("Game cannot be start because the settings are invalids (player is missing or there is no ennemy). ")
 
-            #Play!
-            print("DÉBUT DE LA PARTIE")
-            if print_settings:
-                print("Voici les participants:")
-                print(self.settings_info)
+        #Play!
+        print("DÉBUT DE LA PARTIE")
+        if print_settings:
+            print("Voici les participants:")
+            print(self.settings_info)
 
-            while not self.gameover:
-                self._turn()
-            
-            self._finalize_end()
-        else:
-            raise ValueError("Game cannot be start because the settings are invalids (player is missing or there is no ennemy. ")
+        while not self.gameover:
+            self._turn()
+        
+        self._finalize_gameover()
 
 
     @property
@@ -76,32 +79,30 @@ class RoleplayGame:
 
         print(f"{c.BLUE}{'-' * 20} Tour {self._tour_nb} {'-' * 70}{c.RESET}")
 
-        #------------------------
-        #Player play always first
+        #Player play first
         print("C'est votre tour!")
-        if not self._player.took_a_potion:
-            self._player_turn()
-
-        else:
+        if self._player.took_a_potion:
             print(f"{c.MAGENTA}Vous{c.RESET} passez votre tour puisque vous avez fouillé votre sac pour une potion au tour précédent ⌛.")
             self._player.reset_took_a_potion()
-            get_valid_user_input('Appuyer sur retour pour continuer...', ('',))
+            input('Appuyer sur retour pour continuer...')
+        else:
+            self._player_turn()
         
-        #------------------------
         #Ennemies play next
         print(f"C'est au tour {"des ennemies" if len(self._ennemies) >1 else "de l'ennemi."} ")
         for ennemy in self._ennemies:
-            if not ennemy.is_dead:
-
-                if not ennemy.took_a_potion:
-                    self._ennemy_turn(ennemy)
-                else:
-                    print(f"{ennemy.name} passe son tour puisqu'il a fouillé son sac pour une potion au tour précédent ⌛.")
-
-            else:
+            if ennemy.is_dead:
                 print(f"{ennemy.name} est {c.RED}mort{c.RESET} 💀.")
+                continue
 
-        #-----------------------------------------------
+            #Ennemy is alive
+            if ennemy.took_a_potion:
+                print(f"{ennemy.name} passe son tour puisqu'il a fouillé son sac pour une potion au tour précédent ⌛.")
+                ennemy.reset_took_a_potion()
+                continue
+
+            self._ennemy_turn(ennemy)
+
         #Tour end: display life points of each Character
         print("Récapitulatif du tour:")
         print("\t"+ self._player.life_status)
@@ -114,8 +115,9 @@ class RoleplayGame:
 
         #Action choice
         #note: the ⚔️ seams to delete the next caracter: 2 spaces add in string
-        player_answer = get_valid_user_input(f"Souhaitez-vous attaquer ⚔️  ({Character.ACTION_ATTACK}) ou boire une potion ✨ ({Character.ACTION_DRINKPOTION})? ", Character.ACTIONS)
-        
+        player_answer = get_valid_user_input(f"Souhaitez-vous attaquer ⚔️  ({Character.ACTION_ATTACK}) ou boire une potion ✨ ({Character.ACTION_DRINKPOTION})? ", (Character.ACTION_ATTACK, Character.ACTION_DRINKPOTION))
+        player_answer = int(player_answer)
+
         # Action management
         #   Attack
         if player_answer == Character.ACTION_ATTACK:
@@ -143,7 +145,7 @@ class RoleplayGame:
                 print(f"{c.MAGENTA}Vous{c.RESET} buvez une potion et récupérez {c.GREEN}{life_pt_gain}{c.RESET} point{'s' if life_pt_gain > 1 else ''} de vie ❤️. Vie: {self._player.life_status}.")
 
         else:   #Just a safety display. This else should never be performed becaue every valid player_answer are already managed
-            logging.error("Un événement qui ne devait pas se produire est survenu: le _tour_player semble mal géré.")
+            logger.error("Un événement qui ne devait pas se produire est survenu: le _tour_player semble mal géré.")
             print("Hein? Ça ne devrait pas se produire ça")
 
 
@@ -155,9 +157,12 @@ class RoleplayGame:
             ennemy (Character): _description_
         """
 
-        # Action choice: Attack or Drink a potion if possible
-        ennemy_ai = EnnemyAI(ennemy)
-        action_to_do = ennemy_ai.decide_action()
+        # Action choice: Attack or Drink a potion
+        if ennemy.stats.can_drink_potion:
+            ennemy_ai = EnnemyAI(ennemy)
+            action_to_do = ennemy_ai.decide_action()
+        else:
+            action_to_do = Character.ACTION_ATTACK
         
         # Action management
         #   Attack
@@ -175,7 +180,7 @@ class RoleplayGame:
                 print(f"{ennemy.name} récupère {c.GREEN}{life_pt_gain}{c.RESET} point{'s' if life_pt_gain > 1 else ''} de vie ❤️. Vie: {ennemy.life_status}).")
 
 
-    def _finalize_end(self):
+    def _finalize_gameover(self):
         """Display the final gameover status result"""
 
         print(f"{c.BLUE}{'-' * 20} 🏁 Fin de partie 🏁 {'-' * 50}{c.RESET}")
@@ -194,11 +199,6 @@ class RoleplayGame:
 
     @property
     def _all_ennemies_are_dead(self) -> bool:
-        """Get the final status about dead ennemies. Read-only property
-
-        Returns:
-            bool: True if all the ennemies are dead, False otherwise
-        """
         for ennemy in self._ennemies:
             if not ennemy.is_dead:
                 return False
@@ -207,11 +207,6 @@ class RoleplayGame:
 
     @property
     def gameover(self) -> bool:
-        """Get the status of the game. Read-only property
-
-        Returns:
-            bool: True if all ennemies are dead or if the player is dead, False otherwise
-        """
         return self._all_ennemies_are_dead or self._player.is_dead
 
 
@@ -231,7 +226,7 @@ class RoleplayGame:
                                    attack_min=c.DEFAULT_ATTACK_PLAYER_MIN,
                                    attack_max=c.DEFAULT_ATTACK_PLAYER_MAX, 
                                    can_drink_potion=True),
-                    Bag.with_potions(nb_of_potions=c.DEFAULT_POTION_NB_INIT_JOUEUR, 
+                    Inventory.with_potions(nb_of_potions=c.DEFAULT_POTION_NB_INIT_JOUEUR, 
                                     potion_min_recup=c.DEFAULT_POTION_RECUP_MIN,
                                     potion_max_recup=c.DEFAULT_POTION_RECUP_MAX)
                 )
@@ -241,7 +236,7 @@ class RoleplayGame:
                                    attack_min=c.DEFAULT_ATTACK_ENNEMY_MIN,
                                    attack_max=c.DEFAULT_ATTACK_ENNEMY_MAX, 
                                    can_drink_potion=False),
-                    Bag())
+                    Inventory())
 
         return cls(player, [ennemy])
 
@@ -262,7 +257,7 @@ class RoleplayGame:
                                    attack_min=c.DEFAULT_ATTACK_PLAYER_MIN,
                                    attack_max=c.DEFAULT_ATTACK_PLAYER_MAX, 
                                    can_drink_potion=True),
-                    Bag.with_potions(nb_of_potions=c.DEFAULT_POTION_NB_INIT_JOUEUR, 
+                    Inventory.with_potions(nb_of_potions=c.DEFAULT_POTION_NB_INIT_JOUEUR, 
                                 potion_min_recup=c.DEFAULT_POTION_RECUP_MIN,
                                 potion_max_recup=c.DEFAULT_POTION_RECUP_MAX)
                 )
@@ -272,7 +267,7 @@ class RoleplayGame:
                                    attack_min=0,
                                    attack_max=8, 
                                    can_drink_potion=True),
-                    Bag.with_potions(nb_of_potions=1,
+                    Inventory.with_potions(nb_of_potions=1,
                                     potion_min_recup=c.DEFAULT_POTION_RECUP_MIN,
                                     potion_max_recup=c.DEFAULT_POTION_RECUP_MAX))
 
@@ -281,7 +276,7 @@ class RoleplayGame:
                                    attack_min=0,
                                    attack_max=8, 
                                    can_drink_potion=True),
-                    Bag())
+                    Inventory())
 
         return cls(player, [ennemy1, ennemy2])
 

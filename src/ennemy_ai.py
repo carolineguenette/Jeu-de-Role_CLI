@@ -2,6 +2,7 @@
 from random import randint
 
 from src.character import Character
+from src.exceptions import DeadCharacterError
 
 class EnnemyAI():
     """Simulate actions choice for a Ennemy Character
@@ -12,36 +13,34 @@ class EnnemyAI():
         self.character = character
 
 
-    def decide_action(self) -> str:
+    def decide_action(self) -> int:
         """Decide witch actions to take and return it
 
         Returns:
-            str: One of the possible action between Character.ACTIONS
-                can be ACTION_ATTACK or ACTION_DRINKPOTION
+            int: One of the possible action between
+                 Character.ACTION_ATTACK or Character.ACTION_DRINKPOTION
         """
-        if self.character.stats.can_drink_potion:
 
-            # Wil decide randomly (50/50) to take a potion if life points is below 25% of max life and he has potion
-            # Otherwise, he decide to attack
-            if self.character.inventory.has_potion:   #He has a potion
-                pourcent_life_remains = self.character.current_life / self.character.stats.max_life * 100
+        if self.character.is_dead:
+            raise DeadCharacterError("Character is dead: he cannot decide anything.")
 
-                if pourcent_life_remains < 25:
-                    if randint(False, True):
-                        return Character.ACTION_DRINKPOTION
+        if not self.character.stats.can_drink_potion:
+            return Character.ACTION_ATTACK
+
+        pourcent_life_remains = self.character.current_life / self.character.stats.max_life * 100
         
+        if pourcent_life_remains < 5: #He is somehow stupid: he try to take a potion before checking if he has potion
+            return Character.ACTION_DRINKPOTION
+        
+        if pourcent_life_remains < 25 and self.character.inventory.has_potion():
+            if randint(False, True):
+                return Character.ACTION_DRINKPOTION
+
         return Character.ACTION_ATTACK
+        
 
         
 
 if __name__ == "__main__":
 
-    ennemy = Character.default_ennemy()
-    ennemy.current_life = 2
-    ennemy_ai = EnnemyAI(ennemy)
-    print(f"Action = {ennemy_ai.decide_action()}")  # Must always be ATTACK (default ennemy cannot drink potion)
-
-    thief = Character.thief()
-    thief.current_life = 2
-    thief_ai = EnnemyAI(thief)
-    print(f"Action = {EnnemyAI.decide_action(thief_ai)}")
+    """Unit tests complete: check src/tests/test_ennemy_ai.py"""

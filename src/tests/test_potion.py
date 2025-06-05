@@ -1,7 +1,7 @@
 import pytest
 
 from src.potion import Potion
-from src.exceptions import PoisonPotionError
+from src.exceptions import PoisonPotionError, EmptyPotionError
 import src.constants as c
 
 def test_Potion_init_with_two_numbers():
@@ -26,3 +26,13 @@ def test_Potion_str():
 def test_Potion_repr():
     potion = Potion(10, 20)
     assert (potion.__repr__() == 'Potion(10, 20)')
+
+
+def test_Potion_drink():
+    potion = Potion(0, 10)
+    assert potion.is_empty == False
+    assert potion.drink() >= 0
+    assert potion.is_empty == True
+
+    with pytest.raises(EmptyPotionError):
+        potion.drink()  #call another time

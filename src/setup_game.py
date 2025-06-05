@@ -41,26 +41,23 @@ class SetupGame:
         if setting_choice == SetupGame.CANCEL:
             self._game = None
             print("Configuration du jeu annulée")
+            return False
 
-        else:
-            setting_choice = int(setting_choice)
-            match setting_choice:
-                case SetupGame.SETTINGS_DEFAULT:
-                    self._game = RoleplayGame.default_settings()
-                
-                case SetupGame.SETTINGS_TWO_WEAKS_ENNEMIES:
-                    self._game = RoleplayGame.settings_with_two_weak_ennemies()
-                
-                case SetupGame.SETTINGS_MANUAL:
-                    manual_settings = SetupGameManually()
-                    manual_settings.create()
-                    if manual_settings.is_valid:
-                        self._game = RoleplayGame(manual_settings.player, manual_settings.ennemmies)
-
-            if self.is_valid:
-                return  True
+        setting_choice = int(setting_choice)
+        match setting_choice:
+            case SetupGame.SETTINGS_DEFAULT:
+                self._game = RoleplayGame.default_settings()
             
-        return False
+            case SetupGame.SETTINGS_TWO_WEAKS_ENNEMIES:
+                self._game = RoleplayGame.settings_with_two_weak_ennemies()
+            
+            case SetupGame.SETTINGS_MANUAL:
+                manual_settings = SetupGameManually()
+                manual_settings.create()
+                if manual_settings.is_valid:
+                    self._game = RoleplayGame(manual_settings.player, manual_settings.ennemmies)
+
+        return self.is_valid          
 
 
     @property
@@ -80,13 +77,11 @@ class SetupGame:
         return isinstance(self._game, RoleplayGame)
 
 
-    @property
-    def game(self) -> RoleplayGame:
+    def get_game(self) -> RoleplayGame:
         """A RoleplayGame object ready to be play, as setup during the creation process. Read-only property.
-        Check if is_valid before getting.
 
         Raises:
-            ValueError: when trying to access the property while the game setups are not valid.
+            ValueError: when trying to get the game while the game setups are not valid.
 
         Returns:
             RoleplayGame: A copy of the RoleplayGame object
@@ -127,7 +122,7 @@ if __name__ == "__main__":
 
     #Simulate a game end...
     if isinstance(setup.is_valid, RoleplayGame):
-        game = setup.game
+        game = setup.get_game()
         game._player.current_life = 0
         game._player.inventory.clear()
 

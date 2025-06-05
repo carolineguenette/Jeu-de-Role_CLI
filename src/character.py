@@ -3,26 +3,28 @@ from random import randint
 import logging
 from typing import Self
 
-from src.inventory import Bag
+from src.inventory import Inventory
 from src.potion import Potion
 from src.exceptions import InvalidNameError, InvalidStatsError, DeadCharacterError, UnabledToDrinkPotionError
 import src.constants as c
 
+logger = logging.getLogger(__name__)
+
 @dataclass
 class CharacterStats:
-    """Dataclass of Stat's Character and some information
+    """Dataclass of Stat's Character
 
     Raises:
-        InvalidNameError: A ValueError. Stat cannot be negative and min must be lower than max
+        InvalidNameError: A ValueError. Max life must be >0, stat cannot be negative and min must be lower than max
     """
     max_life: int
-    attack_max: int
     attack_min: int
+    attack_max: int
     can_drink_potion: bool
 
     def __post_init__(self):
-        if self.max_life < 0:
-            raise InvalidStatsError("Maximum life points cannot be negative.")
+        if self.max_life <= 0:
+            raise InvalidStatsError("Maximum life points cannot be 0 or negative.")
         elif self.attack_min < 0:
             raise InvalidStatsError("Minimum attack's points cannot be negative.")
         elif self.attack_max < 0:
@@ -39,25 +41,25 @@ class Character:
         DeadCharacterError: Action cannot be done if the character is dead
         UnabledToDrinkPotionError: There is no potion in inventory
     """
-    POTION_NOT_FOUND = -1
-    ACTION_ATTACK = '1'
-    ACTION_DRINKPOTION = '2'
-    ACTIONS = (ACTION_ATTACK, ACTION_DRINKPOTION)
+    POTION_NOT_FOUND:int = -1   #Must be an integer <0 (valid return is >=0)
 
-    def __init__(self, name: str, stats: CharacterStats, inventory: Bag):
+    ACTION_ATTACK = 1
+    ACTION_DRINKPOTION = 2
+
+    def __init__(self, name: str, stats: CharacterStats, inventory: Inventory = Inventory()):
         """Create a Character with his stats and an inventory
 
         Args:
             name (str): Name of the character. Raise an error if it's an empty string.
             stats (CharacterStats): Stats that define the Character. Stats do not change over time
-            inventory (Bag): Inventory of the Character
+            inventory (Inventory): Inventory of the Character. Default: Empty Inventory
         """
 
         self.name = name
         self.stats = stats
         self.inventory = inventory
         self.current_life = stats.max_life
-        self.took_a_potion = False
+        self._took_a_potion = False
 
 
     def __str__(self):
@@ -92,6 +94,11 @@ class Character:
 
     @property
     def name(self):
+        """Name
+
+        Returns:
+            _type_: A Yellow string name
+        """
         return c.YELLOW + self._name + c.RESET
     
 
@@ -104,7 +111,7 @@ class Character:
 
     @property
     def is_dead(self) -> bool:
-        """Status of character
+        """Check if the caracter is dead
 
         Returns:
             bool: True if alive (current_life > 0), False otherwise
@@ -114,7 +121,18 @@ class Character:
 
     @property
     def life_status(self) -> str:
+        """Life status. The current life is in green and a skull symbol is display at the end if player is dead 
+
+        Returns:
+            str: return examples: 
+                    Player a 0/50 pts de vie 💀
+                    Name a 20/35 pts de vie
+        """
         return f"{self.name} a {c.GREEN}{self.current_life}{c.RESET}/{self.stats.max_life} pts de vie{' 💀' if self.is_dead else ''}"
+
+    @property
+    def took_a_potion(self) -> bool:
+        return self._took_a_potion
 
 
     def attacks(self, ennemy:Self) -> int:
@@ -129,15 +147,14 @@ class Character:
         Returns:
             int: Number of points of dammage
         """
-        if not self.is_dead:
-            dammage = randint(self.stats.attack_min, self.stats.attack_max)
-            logging.info(f"{self.name} attacks {ennemy.name} et lui fait {dammage} point{"s" if dammage>0 else ''} de dommage.")
-
-            if isinstance(ennemy, Character):
-                ennemy._be_attacked(dammage)
-            return dammage
-        else:
-            raise DeadCharacterError("The character is dead and cannot attack.")
+        if self.is_dead:
+            raise DeadCharacterError(f"Unable to attack because the character {self.name} is dead.")
+        
+        dammage = randint(self.stats.attack_min, self.stats.attack_max)
+        ennemy._be_attacked(dammage)
+        
+        logger.info(f"{self.name} attacks {ennemy.name} and makes {dammage} point{"s" if dammage>1 else ''} of damage.")
+        return dammage
 
 
     def _be_attacked(self, damage:int):
@@ -145,13 +162,13 @@ class Character:
         By now, damage is apply directly on Caracter
 
         Args:
-            dammage (int): _description_
+            dammage (int): Number of pts of damage inflicted to character
         """
         self.current_life = self.current_life - damage if self.current_life - damage > 0 else 0
 
 
     def drink_a_potion(self) -> int:
-        """Drink a potion and gain current life point. After being drink, the potion is no more available in bag (throw away)
+        """Drink a potion and gain current life point. After being drink, the potion is no more available in inventory (throw away)
 
         Raises:
             DeadCharacterError: Action cannot be done if the caracter is dead
@@ -159,28 +176,27 @@ class Character:
         Returns:
             int: Number of point recovery by the potion or POTION_NOT_FOUND if no potion is available
         """
-        if not self.is_dead:
-            if self.stats.can_drink_potion:
-                self.took_a_potion = True   #Even if the player has no potion: he search the bag for a potion so flag it
+        if self.is_dead:
+             raise DeadCharacterError(f"Unable to drink a potion because {self.name} is dead.") 
 
-                if self.inventory.has_potion():
-                    potion = self.inventory.get_a_potion()
-                    if isinstance(potion, Potion):
-                        nb_pt_life_gain = potion.drink()
-                        self.current_life = nb_pt_life_gain + self.current_life if nb_pt_life_gain + self.current_life < self.stats.max_life else self.stats.max_life
-                        return nb_pt_life_gain
+        if not self.stats.can_drink_potion:
+            raise UnabledToDrinkPotionError(f"Unable to drink a potion because {self.name} is defined as unabled to drink a potion.")
 
-                logging.info("Impossible de boire une potion car il n'y en a plus.")
-                return Character.POTION_NOT_FOUND
-            else:
-                raise UnabledToDrinkPotionError(f"{self.name} caracter is defined as unabled to drink a potion!")
-        else:
-            raise DeadCharacterError(f"{self.name} is dead and cannot drink a potion.") 
+        self._took_a_potion = True   #Even if the player has no potion: he search the bag for a potion so flag it
+        potion = self.inventory.get_a_potion()
+
+        if not isinstance(potion, Potion):
+            logger.info("Unable to drink a potion because inventory contains none.")
+            return Character.POTION_NOT_FOUND
+
+        #The character is alive, can drink potion and a potion is found in inventory. Drink it and increase current life
+        nb_pt_life_gain = potion.drink()
+        self.current_life = nb_pt_life_gain + self.current_life if nb_pt_life_gain + self.current_life < self.stats.max_life else self.stats.max_life
+        return nb_pt_life_gain
 
 
     def reset_took_a_potion(self): 
-        """Reset the took_a_potion flag to False"""
-        self.took_a_potion = False
+        self._took_a_potion = False
 
 
     @classmethod
@@ -188,14 +204,14 @@ class Character:
         """A shorcut to create a Default Player Character
 
         Args:
-            name (str, optional): _description_. Defaults to "Joueur".
+            name (str, optional): Name of the player. Defaults to "Joueur".
 
         Returns:
             Character: the character with predefined stats
         """
         return Character(name, 
                        CharacterStats(max_life=50, attack_min=5, attack_max=10, can_drink_potion=True), 
-                       Bag.with_potions(3,15, 50))
+                       Inventory.with_potions(3,15, 50))
     
     
     @classmethod
@@ -210,7 +226,7 @@ class Character:
         """
         return Character(name, 
                        CharacterStats(max_life=50, attack_min=5, attack_max=10, can_drink_potion=True), 
-                       Bag())        
+                       Inventory())        
 
 
     @classmethod
@@ -222,7 +238,7 @@ class Character:
             Character: A Default ennemy Character
         """
         stats = CharacterStats(max_life=50, attack_min=5, attack_max=15, can_drink_potion=False)
-        return cls(name, stats,  Bag())
+        return cls(name, stats,  Inventory())
 
 
     @classmethod
@@ -233,7 +249,7 @@ class Character:
             Character: A Dragon Character
         """
         stats = CharacterStats(max_life=350, attack_min=0, attack_max=60, can_drink_potion=False)
-        return cls(name, stats,  Bag()) 
+        return cls(name, stats,  Inventory()) 
 
 
     @classmethod
@@ -244,7 +260,7 @@ class Character:
             Character: A Gobelin Character
         """
         stats = CharacterStats(max_life=35, attack_min=2, attack_max=10, can_drink_potion=True)
-        bag = Bag.with_potions(nb_of_potions=2, potion_min_recup=10, potion_max_recup=35)
+        bag = Inventory.with_potions(nb_of_potions=2, potion_min_recup=10, potion_max_recup=35)
         return cls(name, stats,  bag)
 
 
@@ -257,42 +273,12 @@ class Character:
             Character: A Thief Character
         """
         stats = CharacterStats(max_life=60, attack_min=0, attack_max=25, can_drink_potion=True)
-        bag = Bag.with_potions(nb_of_potions=1, potion_min_recup=15, potion_max_recup=50)
+        bag = Inventory.with_potions(nb_of_potions=1, potion_min_recup=15, potion_max_recup=50)
         return cls(name, stats, bag)
     
 
 
 
 if __name__ == "__main__":
-
-    from inventory import Bag
-    logging.basicConfig(level=logging.DEBUG, filemode='w', filename='character.log')
-
-    joueur = Character('Joueur', 
-                       CharacterStats(max_life=50, attack_min=5, attack_max=10, can_drink_potion=True), 
-                       Bag.with_potions(3,15, 50))
-      
-
-    ennemy = Character('Ennemy', 
-                       CharacterStats(max_life=50, attack_min=5, attack_max=15, can_drink_potion=True), 
-                       Bag.with_potions(1,15, 50))
+    """Unit tests complete: check src/tests/test_character.py"""
     
-    print(joueur.who)
-    print(ennemy.who)
-    # print(joueur) 
-    # print(ennemy)
-
-    # print(f"Dommage de {joueur.name} sur {ennemy.name}: {joueur.attacks(ennemy)}")
-    # print(ennemy)
-    # print(f"Dommage de {joueur.name} sur {ennemy.name}: {joueur.attacks(ennemy)}")
-    # print(f"Dommage de {joueur.name} sur {ennemy.name}: {joueur.attacks(ennemy)}")
-    # print(f"Dommage de {joueur.name} sur {ennemy.name}: {joueur.attacks(ennemy)}")
-    # print(ennemy)
-    # ennemy.drink_a_potion()
-    
-    # ennemyDragon = Character.dragon("Dragon 1")
-    # print(ennemyDragon)
-    
-    
-    # ennemyGobelin = Character.gobelin("Gobelin 1")
-    # print(ennemyGobelin)

@@ -1,16 +1,17 @@
 """Utils methods
 """
 
-def get_valid_user_input(question: str, valid_answers: tuple) -> str:
+def get_valid_user_input(question: str, valid_answers: tuple, invalid_msg: str = "Choix invalide" ) -> str:
     """Ask question to user and loop until the answer is in valid_answers.
-    Print "Choix invalide" as feedback if the answer is not valid
+    Print the invalid_msg as feedback if the answer is not valid
 
     Args:
         question (str): The str give to the input method
-        valid_answers (tuple): Every acceptable answer to the question. Must be a type convertible to str.
+        valid_answers (tuple): Every acceptable answer to the question. Each item must be a str or a type convertible to str.
+        invalid_msg (str): The feedback to print to user if answer is invalid
 
     Returns:
-        str: str entered by the user, that is in the valid_answers
+        str: str entered by the user, that is in the valid_answers tuple
     """
     #Init
     valid_str_answers = []
@@ -19,12 +20,13 @@ def get_valid_user_input(question: str, valid_answers: tuple) -> str:
     for value in valid_answers:
         valid_str_answers.append(str(value))
 
+    #Main loop
     ask_again = True
     while ask_again:
         answer = input(question)
 
         if answer not in valid_str_answers:
-            print('Choix invalide.')
+            print(invalid_msg)
             ask_again = True
         else:
             ask_again = False
@@ -32,12 +34,13 @@ def get_valid_user_input(question: str, valid_answers: tuple) -> str:
     return answer
 
 
-def get_nonempty_string_input(question: str) -> str:
+def get_nonempty_string_input(question: str, invalid_msg: str = "Réponse invalide (chaîne de caractère vide)") -> str:
     """Ask question to user and loop until the answer is not a empty string.
     Print 'Valeur invalide (chaîne de caractère vide)' as feedback if invalid entry
 
     Args:
         question (str): The str give to the input method
+        invalid_msg (str): The feedback to print to user if answer is invalid (Default to "Réponse invalide (chaîne de caractère vide)")
  
     Returns:
         str: the user answer, that will not be an empty string
@@ -47,14 +50,15 @@ def get_nonempty_string_input(question: str) -> str:
         answer = input(question)
 
         if not answer:
-            print('Valeur invalide (chaîne de caractère vide)')
+            print(invalid_msg)
         ask_again = not answer
 
     return answer
 
 
 def get_valid_int_input(question: str, nb_of_int: int = 1, valid_higher_than_0: bool = True, valid_ascending_order: bool = False) -> list[int]:
-    """_summary_
+    """Ask question to user and loop until the answer is not valid.
+    Print feedback in French if invalid entry
 
     Args:
         question (str):  The str display to the user (in the input method)
@@ -95,9 +99,9 @@ def get_valid_int_input(question: str, nb_of_int: int = 1, valid_higher_than_0: 
         
         #Fourth and last: check numeric ascending order
         if still_valid_continue_validation and valid_ascending_order:
-            for i, value in enumerate(int_answers):
+            for i, int_value in enumerate(int_answers):
                 #value must be >= to previous value.
-                if i != 0: 
+                if i != 0:
                     if int_value < int_answers[i-1]:
                         still_valid_continue_validation = False
                         break
@@ -119,6 +123,14 @@ def get_valid_int_input(question: str, nb_of_int: int = 1, valid_higher_than_0: 
         
     return int_answers
 
+
+def is_iterable(obj):
+    try:
+        iter(obj)
+        return True
+    except TypeError:
+        return False
+    
 
 if __name__ == "__main__":
 

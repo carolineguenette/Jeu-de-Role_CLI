@@ -4,6 +4,10 @@ import logging
 from src.exceptions import EmptyPotionError, PoisonPotionError
 import src.constants as c
 
+#Init local logger
+logger = logging.getLogger(__name__)
+
+
 class Potion:
     """ A Potion that will give back a random number of life points after drinking
 
@@ -29,7 +33,7 @@ class Potion:
             self.min_recup = min_recup
             self.max_recup = max_recup
             self.is_empty = False
-            logging.info(f'Création de la potion {repr(self)}.')
+            logger.debug(f'Potion creation: {repr(self)} (id={self.id}).')
             
         else:
             raise PoisonPotionError(f"Magic potion do not exist (hum well...) so Potion(min_recup={min_recup}, max_recup={max_recup}) cannot be created.\n\tInit values must be : min_recup >= 0, max_recup >= 0 and min_recup <= max_recup")
@@ -55,23 +59,14 @@ class Potion:
         Returns:
             int: Number of point of life gain
         """
-        if not self.is_empty:
-            logging.info(f"La potion {self.id} est bue...")
+        logger.debug(f'Drink potion id={self.id}.')
+        if not self.is_empty:       
             self.is_empty = True
             return randint(self.min_recup, self.max_recup)
+        
         else:
-            logging.info("Tentative de boire une potion vide!")
             raise EmptyPotionError("Cannot drink an empty potion.")
 
 
 if __name__ == "__main__":
-
-    logging.basicConfig(level=logging.DEBUG)
-
-    a_potion = Potion(10,30)
-    print(a_potion)
-
-    super_potion = Potion(20,40)
-    print(super_potion)
-    print(f"Boire et retrouve {super_potion.drink()} points de vie.")
-   # super_potion.boire() #Boire again: raise an error
+    """Unit tests complete: check src/tests/test_potion.py"""

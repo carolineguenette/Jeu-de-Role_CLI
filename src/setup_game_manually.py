@@ -102,6 +102,7 @@ class SetupGameManually():
 
         return temp_str
 
+
     @property
     def is_valid(self) -> bool:
         """Check if the current setup is valid
@@ -128,8 +129,7 @@ class SetupGameManually():
 
 
     def _create_a_predefined_ennemy(self):
-        """Create a predefined ennemy and add it to the ennemy setup. The process will always succeed
-        """
+        """Create a predefined ennemy and add it to the ennemy setup. The process will always succeed"""
         
         valid_ennemies_choice = SetupGameManually._display_predefined_ennemies_menu()
         answer = int(get_valid_user_input(f"Choix ({SetupGameManually.ENNEMY_STANDARD}-{SetupGameManually.ENNEMY_DRAGON}) ", valid_ennemies_choice))
@@ -148,34 +148,35 @@ class SetupGameManually():
 
 
     def _modify_or_delete_an_ennemy(self, type:str):
-        """Ask the user which ennemy must be modify of delete and launch the process to alter the enemy. Print back feedback to user.
+        """Ask the user which ennemy must be modify of delete and launch the process to modify the enemy. Print back feedback to user.
         The process can be cancel by the user before the selection of the ennemy to alter.
 
         Args:
             type (str): 'modify' or 'delete'
         """
         nb_ennemies = len(self.ennemmies)
-        if nb_ennemies > 0:
-            self._display_ennemies_menu()
-            
-            range_choices_str = f'1-{nb_ennemies}' if nb_ennemies > 1 else '1'
-            cancel_choice = 'ou retour pour annuler'
-            valid_choices = tuple((i for i in range(1,nb_ennemies+1))) + ('',)
-            
-            ennemy_index_plus1 = get_valid_user_input(f"Quel ennemi souhaitez-vous {'modifier' if type =='modify' else 'supprimer'} ({range_choices_str } {cancel_choice})? ", valid_choices)
-            if ennemy_index_plus1:
-                ennemy_index_plus1 = int(ennemy_index_plus1)
 
-                if type == 'modify':
-                    SetupGameManually._modif_character(self.ennemmies[ennemy_index_plus1 - 1], is_ennemy=True)
-                else: # type == 'delete'
-                    self.ennemmies.pop(ennemy_index_plus1 - 1)
-
-                print(f"L'ennemi {ennemy_index_plus1} a été {'modifié'if type =='modify' else 'supprimé'}.\n" )
-            else:
-                print(f"{'Modification' if type =='modify' else 'Suppression'} d'un ennemi annulée\n")
-        else:
+        if nb_ennemies <= 0:
             print(f"Il n'y a aucun ennemi à {'modifier' if type =='modify' else 'supprimer'} pour le moment.\n")
+            return
+        
+        self._display_ennemies_menu()            
+        range_choices_str = f'1-{nb_ennemies}' if nb_ennemies > 1 else '1'
+        cancel_choice = 'ou retour pour annuler'
+        valid_choices = tuple((i for i in range(1,nb_ennemies+1))) + ('',)  
+        ennemy_index_plus1 = get_valid_user_input(f"Quel ennemi souhaitez-vous {'modifier' if type =='modify' else 'supprimer'} ({range_choices_str } {cancel_choice})? ", valid_choices)
+
+        if not ennemy_index_plus1:
+            print(f"{'Modification' if type =='modify' else 'Suppression'} d'un ennemi annulée\n")
+            return
+        
+        ennemy_index_plus1 = int(ennemy_index_plus1)
+        if type == 'modify':
+            SetupGameManually._modif_character(self.ennemmies[ennemy_index_plus1 - 1], is_ennemy=True)
+        else: # type == 'delete'
+            self.ennemmies.pop(ennemy_index_plus1 - 1)
+
+        print(f"L'ennemi {ennemy_index_plus1} a été {'modifié'if type =='modify' else 'supprimé'}.\n" )
 
 
     def _finalize_config(self) -> bool:
@@ -203,7 +204,7 @@ class SetupGameManually():
     def _display_ennemies_menu(self):
         """List the ennemies in an ordered list beginning wih 1
         """
-        print('\n'.join([f"{i+1}. {ennemy}" for i, ennemy in enumerate(self.ennemmies)]) )
+        print('\n'.join([f"{i}. {ennemy}" for i, ennemy in enumerate(self.ennemmies, start=1)]) )
 
 
     @staticmethod
@@ -233,7 +234,7 @@ class SetupGameManually():
             for i in range(potions_nb[0]):
                 potion_params = get_valid_int_input(f"Paramètres de récupération de la potion {i+1} (min et max, séparés par un espace) ", nb_of_int=2, valid_ascending_order=True)
                 potion = Potion(potion_params[0], potion_params[1])
-                character.inventory.append(potion)
+                character.inventory.add(potion)
                 
 
     @staticmethod
@@ -276,7 +277,7 @@ class SetupGameManually():
         """Display a ordered list of the available predefined ennemies
 
         Returns:
-            tuple: Valide ennemies choices
+            tuple: Valid ennemies choices
         """
         print(f"{'-' * 10} Menu des ennemies prédéfinis {'-' * 10}")
         print(f"{SetupGameManually.ENNEMY_STANDARD}. Créer un ennemi standard")
